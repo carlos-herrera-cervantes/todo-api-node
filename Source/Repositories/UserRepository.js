@@ -17,6 +17,12 @@ class UserRepository {
         return user;
     }
 
+    async getByEmail (email) {
+        let user = await User.findOne({ email });
+
+        return user;
+    }
+
     async createAsync (user) {
         let userObject = await User.create(user);
 
