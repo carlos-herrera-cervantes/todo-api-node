@@ -1,14 +1,7 @@
 'use strict';
 
-const { UserController } = require('../Controllers/UserController');
-const { TodoController } = require('../Controllers/TodoController');
-const { UserRepository } = require('../Repositories/UserRepository');
-const { TodoRepository } = require('../Repositories/TodoRepository');
-
-let userRepository = new UserRepository();
-let todoRepository = new TodoRepository();
-let userController = new UserController(userRepository, todoRepository);
-let todoController = new TodoController(todoRepository, userRepository);
+const { configureServices } = require('../Config/Startup');
+const { userController, todoController } = configureServices();
 
 const routes = app => {
 
