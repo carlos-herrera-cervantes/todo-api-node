@@ -3,7 +3,8 @@
 const dotenv = require('dotenv');
 const express = require('express');
 
-const { routes } = require('./Source/Routes/Routes');
+const { todoRouter } = require('./Source/Routes/TodoRoutes');
+const { userRouter } = require('./Source/Routes/UserRoutes');
 
 dotenv.config();
 
@@ -13,7 +14,7 @@ const app = express();
 const port = process.env.PORT || 4000;
 
 app.use(express.json());
-
-routes(app);
+app.use('/api/v1/todos', todoRouter);
+app.use('/api/v1/users', userRouter);
 
 app.listen(port, () => console.log(`Server running at port ${port}`));
