@@ -1,85 +1,72 @@
 'use strict';
 
 const bcrypt = require('bcrypt');
-const { ObjectID } = require('mongodb');
+const { userRepository } = require('../Repositories/UserRepository.js');
 
-class UserController {
+const getAllAsync = async (request, response) => {
+  try {
+    let users = await userRepository().getAllAsync();
 
-    constructor (userRepository, todoRepository) {
-        this.userRepository = userRepository;
-        this.todoRepository = todoRepository;
-    }
-
-    async getAllAsync (request, response) {
-        try {           
-            let users = await this.userRepository.getAllAsync();
-            
-            return response.status(200).send(users);
-        }
-        catch (error) {
-            return response.status(400).send(error);
-        }
-    }
-
-    async getByIdAsync (request, response) {
-        try {
-            let id = request.params.id;
-
-            if (!ObjectID.isValid(id)) return response.status(404).send();
-
-            let user = await this.userRepository.getByIdAsync(id);
-
-            return response.status(200).send(user);
-        }
-        catch (error) {
-            return response.status(400).send(error);
-        }
-    }
-
-    async createAsync (request, response) {
-        try {
-            request.body.password = await bcrypt.hash(request.body.password, 10);
-
-            await this.userRepository.createAsync(request.body);
-
-            return response.status(201).send(request.body);
-        } 
-        catch (error) {
-            return response.status(400).send(error);
-        }
-    }
-
-    async updateAsync (request, response) {
-        try {
-            let id = request.params.id;
-            
-            if (!ObjectID.isValid(id)) return response.status(404).send();
-
-            await this.userRepository.updateAsync(id, request.body);
-
-            return response.status(201).send(request.body);
-        } 
-        catch (error) {
-            return response.status(400).send(error);
-        }
-    }
-
-    async deleteAsync (request, response) {
-        try {
-            let id = request.params.id;
-            
-            if (!ObjectID.isValid(id)) return response.status(404).send();
-
-            await this.userRepository.deleteAsync(id);
-            await this.todoRepository.deleteManyAsync(id);
-
-            return response.status(204).send();
-        } 
-        catch (error) {
-            return response.status(400).send(error);
-        }
-    }
-
+    return response.status(200).send(users);
+  }
+  catch (error) {
+    return response.status(500).send(error);
+  }
 }
 
-module.exports = { UserController }
+const getByIdAsync = async (request, response) => {
+  try {
+    let user = await userRepository().getByIdAsync(request.params.id);
+
+    return response.status(200).send(user);
+  }
+  catch (error) {
+    return response.status(500).send(error);
+  }
+}
+
+const createAsync = async (request, response) => {
+  try {
+    request.body.password = await bcrypt.hash(request.body.password, 10);
+
+    let user = await userRepository().createAsync(request.body);
+
+    return response.status(200).send(user);
+  }
+  catch (error) {
+    return response.status(500).send(error);
+  }
+}
+
+const updateAsync = async (request, response) => {
+  try {
+    let user = {
+      id: request.params.id,
+      metadata: request.body
+    };
+
+    let updatedUser = await userRepository().updateAsync(user);
+
+    return response.status(201).send(updatedUser);
+  }
+  catch (error) {
+    return response.status(500).send(error);
+  }
+}
+
+const deleteAsync = async (request, response) => {
+  try {
+    let id = request.params.id;
+
+    await userRepository().deleteAsync(id);
+
+    return response.status(204).send();
+  }
+  catch (error) {
+    return response.status(500).send(error);
+  }
+}
+
+const userController = () => ({ getAllAsync, getByIdAsync, createAsync, updateAsync, deleteAsync });
+
+module.exports = { userController };

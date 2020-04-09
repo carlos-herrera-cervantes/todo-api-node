@@ -2,36 +2,18 @@
 
 const { User } = require('../Models/User');
 
-class UserRepository {
-    constructor () { }
+const getAllAsync = async () => await User.find();
 
-    async getAllAsync () {
-        let users = await User.find();
+const getByIdAsync = async id => await User.findById(id);
 
-        return users;
-    }
+const getByEmailAsync = async email => await User.findOne({ email });
 
-    async getByIdAsync (id) {
-        let user = await User.findById(id);
+const createAsync = async user => { let userCreated = await User.create(user); return userCreated.save(); }
 
-        return user;
-    }
+const updateAsync = async user => await User.findOneAndUpdate({ _id: user.id }, { $set: user.metadata }, { new: true });
 
-    async getByEmail (email) {
-        let user = await User.findOne({ email });
+const deleteAsync = async id => await User.findOneAndRemove({ _id: id });
 
-        return user;
-    }
+const userRepository = () => ({ getAllAsync, getByIdAsync, getByEmailAsync, createAsync, updateAsync, deleteAsync });
 
-    async createAsync (user) {
-        let userObject = await User.create(user);
-
-        await userObject.save();
-    }
-
-    async updateAsync (id, userUpdated) { await User.findOneAndUpdate({ _id: id }, { $set: userUpdated }, { new: true }); }
-
-    async deleteAsync (id) { await User.findOneAndRemove({ _id: id }); }
-}
-
-module.exports = { UserRepository }
+module.exports = { userRepository };

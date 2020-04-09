@@ -1,22 +1,24 @@
 'use strict';
 
-const { configureServices } = require('../Config/Startup');
-const { userController, loginController, authentication } = configureServices();
-
 const express = require('express');
+const { userController } = require('../Controllers/UserController');
+const { loginController } = require('../Controllers/LoginController');
+const { authenticateUser } = require('../Middlewares/Authentication');
+const { validateId } = require('../Middlewares/Validator');
+const { userMiddleware } = require('../Middlewares/User');
 
 const userRouter = express.Router();
 
 userRouter.route('/')
-    .get(authentication.validateUser, (request, response) => userController.getAllAsync(request, response))
-    .post(authentication.validateUser, (request, response) => userController.createAsync(request, response));
+    .get(authenticateUser, userController().getAllAsync)
+    .post(authenticateUser, userController().createAsync);
 
 userRouter.route('/:id')
-    .get(authentication.validateUser, (request, response) => userController.getByIdAsync(request, response))
-    .patch(authentication.validateUser, (request, response) => userController.updateAsync(request, response))
-    .delete(authentication.validateUser, (request, response) => userController.deleteAsync(request, response));
+    .get(authenticateUser, validateId, userMiddleware().userExistsById, userController().getByIdAsync)
+    .patch(authenticateUser, validateId, userMiddleware().userExistsById, userController().updateAsync)
+    .delete(authenticateUser, validateId, userMiddleware().userExistsById, userController().deleteAsync);
 
 userRouter.route('/login')
-    .post((request, response) => loginController.Login(request, response));
+    .post(userMiddleware().userExistsByEmail, loginController().login);
 
-module.exports = { userRouter }
+module.exports = { userRouter };

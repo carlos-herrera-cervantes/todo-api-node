@@ -1,90 +1,75 @@
 'use strict';
 
-const { ObjectID } = require('mongodb');
+const { todoRepository } = require('../Repositories/TodoRepository');
+const { userRepository } = require('../Repositories/UserRepository');
 
-class TodoController {
-    constructor (todoRepository, userRepository) {
-        this.todoRepository = todoRepository;
-        this.userRepository = userRepository;
-    }
+const getAllAsync = async (request, response) => {
+  try {
+    let todos = await todoRepository().getAllAsync();
 
-    async getAllAsync (request, response) {
-        try {
-            let todos = await this.todoRepository.getAllAsync();
-
-            return response.status(200).send(todos);
-        } 
-        catch (error) {
-            return response.status(400).send(error);
-        }
-    }
-
-    async getByIdAsync (request, response) {
-        try {
-            let id = request.params.id;
-
-            if (!ObjectID.isValid(id)) return response.status(404).send();
-
-            let todo = await this.todoRepository.getByIdAsync(id);
-
-            return response.status(200).send(todo);
-        } 
-        catch (error) {
-            return response.status(400).send(error);
-        }
-    }
-
-    async createAsync (request, response) {
-        try {
-            let userId = request.params.id;
-
-            request.body.createdAt = new Date().getTime();
-            request.body.user = userId;
-
-            let todo = await this.todoRepository.createAsync(request.body);
-            
-            let user = await this.userRepository.getByIdAsync(userId);
-            user.todos.push(todo);
-
-            await this.userRepository.updateAsync(userId, user);
-
-            return response.status(201).send(request.body);    
-        } 
-        catch (error) {
-            console.log(error);
-            return response.status(400).send(error);
-        }
-    }
-
-    async updateAsync (request, response) {
-        try {
-            let id = request.params.id;
-
-            if (!ObjectID.isValid(id)) return response.status(404).send();
-
-            await this.todoRepository.updateAsync(id, request.body);
-
-            return response.status(201).send(request.body);
-        } 
-        catch (error) {
-            return response.status(400).send(error);    
-        }
-    }
-
-    async deleteAsync (request, response) {
-        try {
-            let id = request.params.id;
-
-            if (!ObjectID.isValid(id)) return response.status(404).send();
-
-            await this.todoRepository.deleteAsync(id);
-
-            return response.status(204).send();
-        } 
-        catch (error) {
-            return response.status(400).send(error);    
-        }
-    }
+    return response.status(200).send(todos);
+  }
+  catch (error) {
+    return response.status(500).send(error);
+  }
 }
 
-module.exports = { TodoController }
+const getByIdAsync = async (request, response) => {
+  try {
+    let todo = await todoRepository().getByIdAsync(request.params.id);
+
+    return response.status(200).send(todo);
+  }
+  catch (error) {
+    return response.status(500).send(error);
+  }
+}
+
+const createAsync = async (request, response) => {
+  try {
+    request.body.createdAt = new Date().getTime();
+    request.body.user = request.params.id;
+
+    let todo = await todoRepository().createAsync(request.body);
+    let user = await userRepository().getByIdAsync(request.params.id);
+
+    user.todos.push(todo);
+    await userRepository().updateAsync({ id: request.params.id, metadata: user });
+
+    return response.status(200).send(todo);
+  }
+  catch (error) {
+    return response.status(500).send(error);
+  }
+}
+
+const updateAsync = async (request, response) => {
+  try {
+    let todo = {
+      id: request.params.id,
+      metadata: request.body
+    };
+
+    let updatedTodo = await todoRepository().updateAsync(todo);
+
+    return response.status(201).send(updatedTodo);
+  }
+  catch (error) {
+    return response.status(500).send(error);
+  }
+}
+
+const deleteAsync = async (request, response) => {
+  try {
+    await todoRepository().deleteAsync(request.params.id);
+
+    return response.status(204).send();
+  }
+  catch (error) {
+    return response.status(500).send(error);
+  }
+}
+
+const todoController = () => ({ getAllAsync, getByIdAsync, createAsync, updateAsync, deleteAsync });
+
+module.exports = { todoController };

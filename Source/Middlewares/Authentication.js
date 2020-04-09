@@ -2,25 +2,21 @@
 
 const jwt = require('jsonwebtoken');
 
-class Authentication {
+const authenticateUser = async (request, response, next) => {
+  try {
+    let token = request.headers.authorization;
 
-    constructor() { }
+    if (!token) { return response.status(401).send({ message: 'No tienes autorización para ver este contenido.' }); }
 
-    async validateUser(request, response, next) {
-        try {
-            let token = request.headers.authorization;
+    let tokenValid = await jwt.verify(token.split(' ').pop(), process.env.SECRET_KEY);
 
-            if (!token) return response.status(401).send({ message: 'No tienes autorización para ver este contenido' });
-            
-            let tokenValid = await jwt.verify(token.split(' ').pop(), process.env.SECRET_KEY);
+    if (!tokenValid) { return response.status(401).send({ message: 'El token no es válido.' }); }
 
-            if (!tokenValid) return response.status(401).send({ message: 'El token no es válido' });
-
-            return next();
-        }
-        catch (error) { return response.status(500).send({ message: error }) }
-    }
-
+    return next();
+  }
+  catch (error) {
+    return response.status(500).send(error);
+  }
 }
 
-module.exports = { Authentication }
+module.exports = { authenticateUser };

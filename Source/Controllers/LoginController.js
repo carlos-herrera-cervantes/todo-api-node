@@ -2,30 +2,24 @@
 
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
+const { userRepository } = require('../Repositories/UserRepository.js');
 
-class LoginController {
+const login = async (request, response) => {
+  try {
+    let user = await userRepository().getByEmailAsync(request.body.email);
+    let isValidPassword = await bcrypt.compare(request.body.password, user.password);
 
-    constructor (userRepository) { 
-        this.userRepository = userRepository;
-    }
+    if (!isValidPassword) { return response.status(400).send({ message: 'Usuario o contraseña incorrectos.' }); }
 
-    async Login (request, response) {
-        try {
-            let user = await this.userRepository.getByEmail(request.body.email);
-            
-            if (!user) return response.status(404).send({ message: 'El usuario no está registrado' });
+    let token = jwt.sign({ email: request.body.email }, process.env.SECRET_KEY);
 
-            let isValidPassword = await bcrypt.compare(request.body.password, user.password);
-
-            if (!isValidPassword) return response.status(400).send({ message: 'Usuario o contraseña incorrectos' });
-
-            let token = jwt.sign({ email: request.body.email }, process.env.SECRET_KEY);
-
-            return response.status(200).send({ token });
-        }
-        catch (error) { console.log(error); return response.status(500).send({ message: error }); }
-    }
-
+    return response.status(200).send({ token });
+  }
+  catch (error) {
+    return response.status(500).send(error);
+  }
 }
 
-module.exports = { LoginController }
+const loginController = () => ({ login });
+
+module.exports = { loginController };

@@ -8,7 +8,7 @@ const { userRouter } = require('./Source/Routes/UserRoutes');
 
 dotenv.config();
 
-require('./Source/Config/Seed');
+require('./Source/Config/Context');
 
 const app = express();
 const port = process.env.PORT || 4000;

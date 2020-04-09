@@ -2,34 +2,18 @@
 
 const { Todo } = require('../Models/Todo');
 
-class TodoRepository {
-    constructor () { }
+const getAllAsync = async () => await Todo.find();
 
-    async getAllAsync () {
-        let todos = await Todo.find();
+const getByIdAsync = async id => await Todo.findById(id);
 
-        return todos;
-    }
+const createAsync = async todo => { let todoCreated = await Todo.create(todo); return await todoCreated.save(); }
 
-    async getByIdAsync (id) {
-        let todo = await Todo.findById(id);
+const updateAsync = async todo => await Todo.findOneAndUpdate({ _id: todo.id }, { $set: todo.metadata }, { new: true });
 
-        return todo;
-    }
+const deleteAsync = async id => await Todo.findOneAndDelete({ _id: id });
 
-    async createAsync (todo) {
-        let todoObject = await Todo.create(todo);
+const deleteManyAsync = async id => await Todo.deleteMany({ _id: id });
 
-        await todoObject.save();
+const todoRepository = () => ({ getAllAsync, getByIdAsync, createAsync, updateAsync, deleteAsync, deleteManyAsync });
 
-        return todoObject;
-    }
-
-    async updateAsync (id, todoUpdated) { await Todo.findOneAndUpdate({ _id: id }, { $set: todoUpdated }, { new: true }); }
-
-    async deleteAsync (id) { await Todo.findOneAndDelete({ _id: id }); }
-
-    async deleteManyAsync (id) { await Todo.deleteMany({ _id: id }); }
-}
-
-module.exports = { TodoRepository }
+module.exports = { todoRepository };
