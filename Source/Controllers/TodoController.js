@@ -27,7 +27,6 @@ const getByIdAsync = async (request, response) => {
 
 const createAsync = async (request, response) => {
   try {
-    request.body.createdAt = new Date().getTime();
     request.body.user = request.params.id;
 
     let todo = await todoRepository().createAsync(request.body);
@@ -61,6 +60,9 @@ const updateAsync = async (request, response) => {
 
 const deleteAsync = async (request, response) => {
   try {
+    let todo = await todoRepository().getByIdAsync(request.params.id);
+
+    await userRepository().deleteTodoAsync({ user: todo.user, todo: request.params.id });
     await todoRepository().deleteAsync(request.params.id);
 
     return response.status(204).send();

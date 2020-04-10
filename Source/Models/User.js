@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const moment = require('moment');
 
 let UserSchema = new mongoose.Schema({
     email: {
@@ -21,10 +22,18 @@ let UserSchema = new mongoose.Schema({
         type: Number,
         default: 18
     },
+    createdAt: {
+        type: Date,
+        default: moment().utc().format('YYYY-MM-DDTHH:mm:ss')
+    },
+    updatedAt: {
+        type: Date,
+        default: moment().utc().format('YYYY-MM-DDTHH:mm:ss')
+    },
     todos: [
-        { 
-            type: mongoose.Schema.Types.ObjectId, 
-            ref: 'Todo' 
+        {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'Todo'
         }
     ]
 });

@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const moment = require('moment');
 
 let TodoSchema = new mongoose.Schema({
     title: {
@@ -13,8 +14,12 @@ let TodoSchema = new mongoose.Schema({
         trim: true
     },
     createdAt: {
-        type: Number,
-        default: null
+        type: Date,
+        default: moment().utc().format('YYYY-MM-DDTHH:mm:ss')
+    },
+    updatedAt: {
+        type: Date,
+        default: moment().utc().format('YYYY-MM-DDTHH:mm:ss')
     },
     user: {
         type: mongoose.Schema.Types.ObjectId,

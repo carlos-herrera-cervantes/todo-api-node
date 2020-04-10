@@ -14,6 +14,13 @@ const updateAsync = async user => await User.findOneAndUpdate({ _id: user.id }, 
 
 const deleteAsync = async id => await User.findOneAndRemove({ _id: id });
 
-const userRepository = () => ({ getAllAsync, getByIdAsync, getByEmailAsync, createAsync, updateAsync, deleteAsync });
+const deleteTodoAsync = async identifiers => {
+  let user = await User.findById(identifiers.user);
+  let metadata = { todos: user.todos.filter(element => element != identifiers.todo) }
+
+  return await updateAsync({ id: user._id, metadata });
+}
+
+const userRepository = () => ({ getAllAsync, getByIdAsync, getByEmailAsync, createAsync, updateAsync, deleteAsync, deleteTodoAsync });
 
 module.exports = { userRepository };
