@@ -2,11 +2,11 @@
 
 const { User } = require('../Models/User');
 
-const getAllAsync = async () => await User.find();
+const getAllAsync = async object => await User.find(object.criteria ? object.criteria : {}).sort(object.sort ? object.sort : {});
 
 const getByIdAsync = async id => await User.findById(id);
 
-const getByEmailAsync = async email => await User.findOne({ email });
+const getOneAsync = async object => await User.findOne(object.criteria ? object.criteria : {});
 
 const createAsync = async user => { let userCreated = await User.create(user); return userCreated.save(); }
 
@@ -21,6 +21,6 @@ const deleteTodoAsync = async identifiers => {
   return await updateAsync({ id: user._id, metadata });
 }
 
-const userRepository = () => ({ getAllAsync, getByIdAsync, getByEmailAsync, createAsync, updateAsync, deleteAsync, deleteTodoAsync });
+const userRepository = () => ({ getAllAsync, getByIdAsync, getOneAsync, createAsync, updateAsync, deleteAsync, deleteTodoAsync });
 
 module.exports = { userRepository };

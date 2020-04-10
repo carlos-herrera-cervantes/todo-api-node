@@ -1,6 +1,7 @@
 'use strict';
 
 const { userRepository } = require('../Repositories/UserRepository.js');
+const { requestExtensions } = require('../Extensions/RequestExtensions');
 
 const userExistsById = async (request, response, next) => {
   try {
@@ -17,7 +18,8 @@ const userExistsById = async (request, response, next) => {
 
 const userExistsByEmail = async (request, response, next) => {
   try {
-    let user = await userRepository().getByEmailAsync(request.body.email);
+    let object = requestExtensions().createObjectQuery({ email: request.body.email });
+    let user = await userRepository().getOneAsync(object);
 
     if (!user) { return response.status(404).send({ message: response.__('UserNotFound') }); }
 

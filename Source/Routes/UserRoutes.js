@@ -2,6 +2,7 @@
 
 const express = require('express');
 const { userController } = require('../Controllers/UserController');
+const { todoController } = require('../Controllers/TodoController');
 const { loginController } = require('../Controllers/LoginController');
 const { authenticateUser } = require('../Middlewares/Authentication');
 const { validateId } = require('../Middlewares/Validator');
@@ -18,6 +19,9 @@ userRouter.route('/:id')
     .get(authenticateUser, validateId, userMiddleware().userExistsById, userController().getByIdAsync)
     .patch(authenticateUser, validateId, userMiddleware().userExistsById, updateDateMiddleware, userController().updateAsync)
     .delete(authenticateUser, validateId, userMiddleware().userExistsById, userController().deleteAsync);
+
+userRouter.route('/:id/todos')
+    .get(authenticateUser, validateId, userMiddleware().userExistsById, todoController().getByUserIdAsync);
 
 userRouter.route('/login')
     .post(userMiddleware().userExistsByEmail, loginController().login);

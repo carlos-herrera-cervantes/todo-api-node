@@ -2,10 +2,12 @@
 
 const { todoRepository } = require('../Repositories/TodoRepository');
 const { userRepository } = require('../Repositories/UserRepository');
+const { requestExtensions } = require('../Extensions/RequestExtensions');
 
 const getAllAsync = async (request, response) => {
   try {
-    let todos = await todoRepository().getAllAsync();
+    let object = requestExtensions().createObjectQuery(request.query);
+    let todos = await todoRepository().getAllAsync(object);
 
     return response.status(200).send(todos);
   }
@@ -19,6 +21,19 @@ const getByIdAsync = async (request, response) => {
     let todo = await todoRepository().getByIdAsync(request.params.id);
 
     return response.status(200).send(todo);
+  }
+  catch (error) {
+    return response.status(500).send(error);
+  }
+}
+
+const getByUserIdAsync = async (request, response) => {
+  try {
+    request.query.user = request.params.id;
+    let object = requestExtensions().createObjectQuery(request.query);
+    let todos = await todoRepository().getAllAsync(object);
+
+    return response.status(200).send(todos);
   }
   catch (error) {
     return response.status(500).send(error);
@@ -72,6 +87,6 @@ const deleteAsync = async (request, response) => {
   }
 }
 
-const todoController = () => ({ getAllAsync, getByIdAsync, createAsync, updateAsync, deleteAsync });
+const todoController = () => ({ getAllAsync, getByIdAsync, getByUserIdAsync, createAsync, updateAsync, deleteAsync });
 
 module.exports = { todoController };

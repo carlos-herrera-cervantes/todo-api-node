@@ -2,11 +2,14 @@
 
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
+
 const { userRepository } = require('../Repositories/UserRepository.js');
+const { requestExtensions } = require('../Extensions/RequestExtensions');
 
 const login = async (request, response) => {
   try {
-    let user = await userRepository().getByEmailAsync(request.body.email);
+    let object = requestExtensions().createObjectQuery({ email: request.body.email });
+    let user = await userRepository().getOneAsync(object);
     let isValidPassword = await bcrypt.compare(request.body.password, user.password);
 
     if (!isValidPassword) { return response.status(400).send({ message: response.__('InvalidCredentials') }); }

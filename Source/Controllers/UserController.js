@@ -1,11 +1,14 @@
 'use strict';
 
 const bcrypt = require('bcrypt');
+
 const { userRepository } = require('../Repositories/UserRepository.js');
+const { requestExtensions } = require('../Extensions/RequestExtensions');
 
 const getAllAsync = async (request, response) => {
   try {
-    let users = await userRepository().getAllAsync();
+    let object = requestExtensions().createObjectQuery(request.query);
+    let users = await userRepository().getAllAsync(object);
 
     return response.status(200).send(users);
   }
