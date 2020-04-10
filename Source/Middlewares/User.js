@@ -6,7 +6,7 @@ const userExistsById = async (request, response, next) => {
   try {
     let user = await userRepository().getByIdAsync(request.params.id);
 
-    if (!user) { return response.status(404).send({ message: 'Usuario no encontrado.' }); }
+    if (!user) { return response.status(404).send({ message: response.__('UserNotFound') }); }
 
     return next();
   }
@@ -19,7 +19,7 @@ const userExistsByEmail = async (request, response, next) => {
   try {
     let user = await userRepository().getByEmailAsync(request.body.email);
 
-    if (!user) { return response.status(404).send({ message: 'Usuario no encontrado.' }); }
+    if (!user) { return response.status(404).send({ message: response.__('UserNotFound') }); }
 
     return next();
   }

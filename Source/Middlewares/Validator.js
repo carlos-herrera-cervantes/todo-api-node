@@ -6,7 +6,7 @@ const validateId = (request, response, next) => {
   try {
     let id = request.params.id;
 
-    if (!ObjectID.isValid(id)) { return response.status(400).send({ message: 'El ID ingresado no es válido.' }); }
+    if (!ObjectID.isValid(id)) { return response.status(400).send({ message: response.__('InvalidObjectId') }); }
 
     return next();
   }

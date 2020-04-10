@@ -9,7 +9,7 @@ const login = async (request, response) => {
     let user = await userRepository().getByEmailAsync(request.body.email);
     let isValidPassword = await bcrypt.compare(request.body.password, user.password);
 
-    if (!isValidPassword) { return response.status(400).send({ message: 'Usuario o contraseña incorrectos.' }); }
+    if (!isValidPassword) { return response.status(400).send({ message: response.__('InvalidCredentials') }); }
 
     let token = jwt.sign({ email: request.body.email }, process.env.SECRET_KEY);
 

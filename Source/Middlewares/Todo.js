@@ -6,7 +6,7 @@ const todoExistsById = async (request, response, next) => {
   try {
     let todo = todoRepository().getByIdAsync(request.params.id);
 
-    if (!todo) { return response.status(404).send({ message: 'Nota no encontrada.' }); }
+    if (!todo) { return response.status(404).send({ message: response.__('TodoNotFound') }); }
 
     return next();
   }

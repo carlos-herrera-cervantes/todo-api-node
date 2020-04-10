@@ -1,0 +1,8 @@
+{
+  "UserNotFound": "Usuario no encontrado.",
+  "TodoNotFound": "Nota no encontrada.",
+  "InvalidCredentials": "Usuario o contraseña incorrectos.",
+  "NotHavePermissions": "No tienes autorización para ver este contenido.",
+  "InvalidToken": "El token no es válido.",
+  "InvalidObjectId": "El ID ingresado no es válido."
+}
