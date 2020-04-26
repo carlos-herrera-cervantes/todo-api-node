@@ -2,7 +2,7 @@
 
 const { User } = require('../Models/User');
 
-const getAllAsync = async object => await User.find(object.criteria ? object.criteria : {}).sort(object.sort ? object.sort : {});
+const getAllAsync = async object => await User.find(object.criteria ? object.criteria : {}).skip(object.page).limit(object.pageSize).sort(object.sort ? object.sort : {});
 
 const getByIdAsync = async id => await User.findById(id);
 

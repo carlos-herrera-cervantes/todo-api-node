@@ -10,6 +10,7 @@ const { userRouter } = require('./Source/Routes/UserRoutes');
 dotenv.config();
 
 require('./Source/Config/Context');
+require('./Source/Extensions/StringExtensions');
 
 const app = express();
 const port = process.env.PORT || 4000;

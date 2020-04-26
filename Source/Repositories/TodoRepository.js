@@ -2,7 +2,7 @@
 
 const { Todo } = require('../Models/Todo');
 
-const getAllAsync = async object => await Todo.find(object.criteria ? object.criteria : {}).sort(object.sort ? object.sort : {});
+const getAllAsync = async object => await Todo.find(object.criteria ? object.criteria : {}).skip(object.page).limit(object.pageSize).sort(object.sort ? object.sort : {});
 
 const getByIdAsync = async id => await Todo.findById(id);
 

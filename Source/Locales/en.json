@@ -4,5 +4,7 @@
   "InvalidCredentials": "Wrong user or password.",
   "NotHavePermissions": "You don't have permissions to see this content.",
   "InvalidToken": "Invalid token.",
-  "InvalidObjectId": "The entered ID is not valid."
+  "InvalidObjectId": "The entered ID is not valid.",
+  "InvalidPaginateParams": "Must be indicate the size of page and number of page.",
+  "InvalidPaginateNumbers": "The value of page must be greater than 0 / The valur of pageSize must be greater than 0 and minor than 100."
 }

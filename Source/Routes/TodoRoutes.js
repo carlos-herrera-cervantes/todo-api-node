@@ -3,7 +3,7 @@
 const express = require('express');
 const { todoController } = require('../Controllers/TodoController');
 const { authenticateUser } = require('../Middlewares/Authentication');
-const { validateId } = require('../Middlewares/Validator');
+const { validateId, validatePagination } = require('../Middlewares/Validator');
 const { todoMiddleware } = require('../Middlewares/Todo');
 const { userMiddleware } = require('../Middlewares/User');
 const { updateDateMiddleware } = require('../Middlewares/UpdateDate');
@@ -11,7 +11,7 @@ const { updateDateMiddleware } = require('../Middlewares/UpdateDate');
 const todoRouter = express.Router();
 
 todoRouter.route('/')
-    .get(authenticateUser, todoController().getAllAsync);
+    .get(authenticateUser, validatePagination, todoController().getAllAsync);
 
 todoRouter.route('/:id')
     .get(authenticateUser, validateId, todoMiddleware().todoExistsById, todoController().getByIdAsync)

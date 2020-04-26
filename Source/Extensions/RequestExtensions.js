@@ -1,5 +1,11 @@
 'use strict';
 
+const configurePagination = query => {
+  query.page = query.page === 1 ? 0 : query.page === 0 ? 0 : query.page - 1;
+
+  return { page: query.page * query.pageSize, pageSize: query.pageSize };
+}
+
 const configureSort = query => {
   for (let property in query) {
     var field = property.toLowerCase().includes('sort') ? query[property] : false;
@@ -10,7 +16,7 @@ const configureSort = query => {
 
   let isAscending = field.includes('-');
   let objectQuery = {};
-  
+
   objectQuery[isAscending ? field.split('-').pop() : field] = isAscending ? -1 : 1;
 
   return objectQuery;
@@ -18,18 +24,18 @@ const configureSort = query => {
 
 const createObjectQuery = query => {
   if (!query) { return {}; }
-
-  let object = { criteria: {} };
+  
+  let criteria = { };
 
   for (let property in query) {
-    if (property.toLowerCase().includes('sort')) continue;
+    if (process.env.QUERY_PARAMS.includes(property.toLowerCase())) continue;
 
-    object.criteria[property] = query[property];
+    criteria[property] = query[property];
   }
 
   let sort = configureSort(query);
-
-  sort ? object.sort = sort : object;
+  const { page, pageSize } = configurePagination(query);
+  const object = { criteria, sort, page, pageSize };
 
   return object;
 }
