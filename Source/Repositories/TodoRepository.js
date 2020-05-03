@@ -14,6 +14,8 @@ const deleteAsync = async id => await Todo.findOneAndDelete({ _id: id });
 
 const deleteManyAsync = async id => await Todo.deleteMany({ _id: id });
 
-const todoRepository = () => ({ getAllAsync, getByIdAsync, createAsync, updateAsync, deleteAsync, deleteManyAsync });
+const count = async () => await Todo.countDocuments();
+
+const todoRepository = () => ({ getAllAsync, getByIdAsync, createAsync, updateAsync, deleteAsync, deleteManyAsync, count });
 
 module.exports = { todoRepository };

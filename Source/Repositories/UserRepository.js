@@ -21,6 +21,8 @@ const deleteTodoAsync = async identifiers => {
   return await updateAsync({ id: user._id, metadata });
 }
 
-const userRepository = () => ({ getAllAsync, getByIdAsync, getOneAsync, createAsync, updateAsync, deleteAsync, deleteTodoAsync });
+const count = async () => await User.countDocuments();
+
+const userRepository = () => ({ getAllAsync, getByIdAsync, getOneAsync, createAsync, updateAsync, deleteAsync, deleteTodoAsync, count });
 
 module.exports = { userRepository };

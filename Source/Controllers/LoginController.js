@@ -12,14 +12,14 @@ const login = async (request, response) => {
     let user = await userRepository().getOneAsync(object);
     let isValidPassword = await bcrypt.compare(request.body.password, user.password);
 
-    if (!isValidPassword) { return response.status(400).send({ message: response.__('InvalidCredentials') }); }
+    if (!isValidPassword) { return response.status(400).send({ status: false, message: response.__('InvalidCredentials') }); }
 
     let token = jwt.sign({ email: request.body.email }, process.env.SECRET_KEY);
 
-    return response.status(200).send({ token });
+    return response.status(200).send({ status: true, data: { token } });
   }
   catch (error) {
-    return response.status(500).send(error);
+    return response.status(500).send({ status: false, message: error.message });
   }
 }
 

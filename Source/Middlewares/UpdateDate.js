@@ -9,7 +9,7 @@ const updateDateMiddleware = (request, response, next) => {
     return next();
   }
   catch (error) {
-    return response.status(500).send(error);
+    return response.status(500).send({ status: false, message: error.message });
   }
 }
 

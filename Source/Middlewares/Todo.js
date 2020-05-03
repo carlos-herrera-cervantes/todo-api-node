@@ -6,12 +6,12 @@ const todoExistsById = async (request, response, next) => {
   try {
     let todo = todoRepository().getByIdAsync(request.params.id);
 
-    if (!todo) { return response.status(404).send({ message: response.__('TodoNotFound') }); }
+    if (!todo) { return response.status(404).send({ status: false, message: response.__('TodoNotFound') }); }
 
     return next();
   }
   catch (error) {
-    return response.status(500).send(error);
+    return response.status(500).send({ status: false, message: error.message });
   }
 }
 
