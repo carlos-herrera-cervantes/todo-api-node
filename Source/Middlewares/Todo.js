@@ -4,7 +4,7 @@ const { todoRepository } = require('../Repositories/TodoRepository');
 
 const todoExistsById = async (request, response, next) => {
   try {
-    let todo = todoRepository().getByIdAsync(request.params.id);
+    const todo = todoRepository().getByIdAsync(request.params.id);
 
     if (!todo) { return response.status(404).send({ status: false, message: response.__('TodoNotFound') }); }
 

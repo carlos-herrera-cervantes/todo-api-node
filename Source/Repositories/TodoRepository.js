@@ -2,7 +2,12 @@
 
 const { Todo } = require('../Models/Todo');
 
-const getAllAsync = async object => await Todo.find(object.criteria ? object.criteria : {}).skip(object.page).limit(object.pageSize).sort(object.sort ? object.sort : {});
+const getAllAsync = async object =>
+    await Todo
+        .find(object.criteria ? object.criteria : {})
+        .skip(object.page)
+        .limit(object.pageSize)
+        .sort(object.sort ? object.sort : {});
 
 const getByIdAsync = async id => await Todo.findById(id);
 
@@ -14,7 +19,7 @@ const deleteAsync = async id => await Todo.findOneAndDelete({ _id: id });
 
 const deleteManyAsync = async id => await Todo.deleteMany({ _id: id });
 
-const count = async () => await Todo.countDocuments();
+const count = async object => await Todo.countDocuments(object.criteria ? object.criteria : {});
 
 const todoRepository = () => ({ getAllAsync, getByIdAsync, createAsync, updateAsync, deleteAsync, deleteManyAsync, count });
 

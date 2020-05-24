@@ -8,10 +8,10 @@ const { getPaginateProperty } = require('../Extensions/ResponseExtensions');
 
 const getAllAsync = async (request, response) => {
   try {
-    let object = requestExtensions().createObjectQuery(request.query);
-    let users = await userRepository().getAllAsync(object);
-    let totalDocuments = await userRepository().count();
-    let paginate = getPaginateProperty({ query: request.query, documents: users, totalDocuments });
+    const object = requestExtensions().createObjectQuery(request.query);
+    const users = await userRepository().getAllAsync(object);
+    const totalDocuments = await userRepository().count();
+    const paginate = getPaginateProperty({ query: request.query, documents: users, totalDocuments });
 
     return response.status(200).send({ status: true, data: users, paginate });
   }
@@ -22,7 +22,7 @@ const getAllAsync = async (request, response) => {
 
 const getByIdAsync = async (request, response) => {
   try {
-    let user = await userRepository().getByIdAsync(request.params.id);
+    const user = await userRepository().getByIdAsync(request.params.id);
 
     return response.status(200).send({ status: true, data: user });
   }
@@ -35,7 +35,7 @@ const createAsync = async (request, response) => {
   try {
     request.body.password = await bcrypt.hash(request.body.password, 10);
 
-    let user = await userRepository().createAsync(request.body);
+    const user = await userRepository().createAsync(request.body);
 
     return response.status(200).send({ status: true, data: user });
   }
@@ -46,12 +46,12 @@ const createAsync = async (request, response) => {
 
 const updateAsync = async (request, response) => {
   try {
-    let user = {
+    const user = {
       id: request.params.id,
       metadata: request.body
     };
 
-    let updatedUser = await userRepository().updateAsync(user);
+    const updatedUser = await userRepository().updateAsync(user);
 
     return response.status(201).send({ status: true, data: updatedUser });
   }
@@ -62,7 +62,7 @@ const updateAsync = async (request, response) => {
 
 const deleteAsync = async (request, response) => {
   try {
-    let id = request.params.id;
+    const id = request.params.id;
 
     await userRepository().deleteAsync(id);
 

@@ -4,7 +4,7 @@ const { ObjectID } = require('mongodb');
 
 const validateId = (request, response, next) => {
   try {
-    let id = request.params.id;
+    const id = request.params.id;
 
     if (!ObjectID.isValid(id)) { return response.status(400).send({ status: false, message: response.__('InvalidObjectId') }); }
 
@@ -17,7 +17,7 @@ const validateId = (request, response, next) => {
 
 const validatePagination = (request, response, next) => {
   try {
-    let { paginate, page, pageSize } = request.query;
+    const { paginate, page, pageSize } = request.query;
 
     if (!paginate) { [ request.query.page, request.query.pageSize ] = [ 0, 0 ]; return next(); }
 

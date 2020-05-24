@@ -7,10 +7,10 @@ const { getPaginateProperty } = require('../Extensions/ResponseExtensions');
 
 const getAllAsync = async (request, response) => {
   try {
-    let object = requestExtensions().createObjectQuery(request.query);
-    let todos = await todoRepository().getAllAsync(object);
-    let totalDocuments = await todoRepository().count();
-    let paginate = getPaginateProperty({ query: request.query, documents: todos, totalDocuments });
+    const object = requestExtensions().createObjectQuery(request.query);
+    const todos = await todoRepository().getAllAsync(object);
+    const totalDocuments = await todoRepository().count();
+    const paginate = getPaginateProperty({ query: request.query, documents: todos, totalDocuments });
 
     return response.status(200).send({ status: true, data: todos, paginate });
   }
@@ -21,7 +21,7 @@ const getAllAsync = async (request, response) => {
 
 const getByIdAsync = async (request, response) => {
   try {
-    let todo = await todoRepository().getByIdAsync(request.params.id);
+    const todo = await todoRepository().getByIdAsync(request.params.id);
 
     return response.status(200).send({ status: true, data: todo });
   }
@@ -33,10 +33,10 @@ const getByIdAsync = async (request, response) => {
 const getByUserIdAsync = async (request, response) => {
   try {
     request.query.user = request.params.id;
-    let object = requestExtensions().createObjectQuery(request.query);
-    let todos = await todoRepository().getAllAsync(object);
-    let totalDocuments = await todoRepository().count();
-    let paginate = getPaginateProperty({ query: request.query, documents: todos, totalDocuments });
+    const object = requestExtensions().createObjectQuery(request.query);
+    const todos = await todoRepository().getAllAsync(object);
+    const totalDocuments = await todoRepository().count(object);
+    const paginate = getPaginateProperty({ query: request.query, documents: todos, totalDocuments });
 
     return response.status(200).send({ status: true, data: todos, paginate });
   }
@@ -49,8 +49,8 @@ const createAsync = async (request, response) => {
   try {
     request.body.user = request.params.id;
 
-    let todo = await todoRepository().createAsync(request.body);
-    let user = await userRepository().getByIdAsync(request.params.id);
+    const todo = await todoRepository().createAsync(request.body);
+    const user = await userRepository().getByIdAsync(request.params.id);
 
     user.todos.push(todo);
     await userRepository().updateAsync({ id: request.params.id, metadata: user });
@@ -64,12 +64,12 @@ const createAsync = async (request, response) => {
 
 const updateAsync = async (request, response) => {
   try {
-    let todo = {
+    const todo = {
       id: request.params.id,
       metadata: request.body
     };
 
-    let updatedTodo = await todoRepository().updateAsync(todo);
+    const updatedTodo = await todoRepository().updateAsync(todo);
 
     return response.status(201).send({ status: true, data: updatedTodo });
   }
@@ -80,7 +80,7 @@ const updateAsync = async (request, response) => {
 
 const deleteAsync = async (request, response) => {
   try {
-    let todo = await todoRepository().getByIdAsync(request.params.id);
+    const todo = await todoRepository().getByIdAsync(request.params.id);
 
     await userRepository().deleteTodoAsync({ user: todo.user, todo: request.params.id });
     await todoRepository().deleteAsync(request.params.id);

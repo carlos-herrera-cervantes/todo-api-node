@@ -5,7 +5,7 @@ const { requestExtensions } = require('../Extensions/RequestExtensions');
 
 const userExistsById = async (request, response, next) => {
   try {
-    let user = await userRepository().getByIdAsync(request.params.id);
+    const user = await userRepository().getByIdAsync(request.params.id);
 
     if (!user) { return response.status(404).send({ status: false, message: response.__('UserNotFound') }); }
 
@@ -18,8 +18,8 @@ const userExistsById = async (request, response, next) => {
 
 const userExistsByEmail = async (request, response, next) => {
   try {
-    let object = requestExtensions().createObjectQuery({ email: request.body.email });
-    let user = await userRepository().getOneAsync(object);
+    const object = requestExtensions().createObjectQuery({ email: request.body.email });
+    const user = await userRepository().getOneAsync(object);
 
     if (!user) { return response.status(404).send({ status: false, message: response.__('UserNotFound') }); }
 

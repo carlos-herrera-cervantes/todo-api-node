@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 const moment = require('moment');
 
-let TodoSchema = new mongoose.Schema({
+const TodoSchema = new mongoose.Schema({
     title: {
         type: String,
         required: true,
@@ -27,6 +27,6 @@ let TodoSchema = new mongoose.Schema({
     }
 });
 
-let Todo = mongoose.model('Todo', TodoSchema);
+const Todo = mongoose.model('Todo', TodoSchema);
 
 module.exports = { Todo }
