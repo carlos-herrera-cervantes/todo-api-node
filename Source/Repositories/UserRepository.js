@@ -2,16 +2,16 @@
 
 const { User } = require('../Models/User');
 
-const getAllAsync = async object => 
+const getAllAsync = async ({ criteria, page, pageSize, sort }) => 
   await User
-    .find(object.criteria ? object.criteria : {})
-    .skip(object.page)
-    .limit(object.pageSize)
-    .sort(object.sort ? object.sort : {});
+    .find(criteria ? criteria : {})
+    .skip(page)
+    .limit(pageSize)
+    .sort(sort ? sort : {});
 
 const getByIdAsync = async id => await User.findById(id);
 
-const getOneAsync = async object => await User.findOne(object.criteria ? object.criteria : {});
+const getOneAsync = async ({ criteria }) => await User.findOne(criteria ? criteria : {});
 
 const createAsync = async user => { 
   const userCreated = await User.create(user); 
@@ -31,6 +31,15 @@ const deleteTodoAsync = async identifiers => {
 
 const count = async () => await User.countDocuments();
 
-const userRepository = () => ({ getAllAsync, getByIdAsync, getOneAsync, createAsync, updateAsync, deleteAsync, deleteTodoAsync, count });
+const userRepository = () => ({ 
+  getAllAsync, 
+  getByIdAsync, 
+  getOneAsync, 
+  createAsync, 
+  updateAsync, 
+  deleteAsync, 
+  deleteTodoAsync, 
+  count 
+});
 
 module.exports = { userRepository };

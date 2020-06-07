@@ -19,11 +19,22 @@ const validatePagination = (request, response, next) => {
   try {
     const { paginate, page, pageSize } = request.query;
 
-    if (!paginate) { [ request.query.page, request.query.pageSize ] = [ 0, 0 ]; return next(); }
+    if (!paginate) {
+      [ request.query.page, request.query.pageSize ] = [ 0, 0 ];
+      return next();
+    }
 
-    if (paginate.parseBoolean() && (!page || !pageSize)) { return response.status(400).send({ status: false, message: response.__('InvalidPaginateParams') }); }
+    const isNotHavePages = !page || !pageSize;
 
-    if (parseInt(page) <= 0 || parseInt(pageSize) <= 0 || parseInt(pageSize) > 100) { return response.status(400).send({ status: false, message: response.__('InvalidPaginateNumbers') }); }
+    if (paginate.parseBoolean() && isNotHavePages) {
+      return response.status(400).send({ status: false, message: response.__('InvalidPaginateParams') });
+    }
+
+    const isInvalidPages = parseInt(page) <= 0 || parseInt(pageSize) <= 0 || parseInt(pageSize) > 100;
+
+    if (isInvalidPages) { 
+      return response.status(400).send({ status: false, message: response.__('InvalidPaginateNumbers') });
+    }
 
     [ request.query.page, request.query.pageSize ] = [ parseInt(page), parseInt(pageSize) ];
 
