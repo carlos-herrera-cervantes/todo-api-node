@@ -10,7 +10,7 @@ const getAllAsync = async (request, response) => {
   try {
     const object = requestExtensions().createObjectQuery(request.query);
     const users = await userRepository().getAllAsync(object);
-    const totalDocuments = await userRepository().count();
+    const totalDocuments = await userRepository().count(object);
     const paginate = getPaginateProperty({ query: request.query, documents: users, totalDocuments });
 
     return response.status(200).send({ status: true, data: users, paginate });

@@ -9,7 +9,7 @@ const getAllAsync = async (request, response) => {
   try {
     const object = requestExtensions().createObjectQuery(request.query);
     const todos = await todoRepository().getAllAsync(object);
-    const totalDocuments = await todoRepository().count();
+    const totalDocuments = await todoRepository().count(object);
     const paginate = getPaginateProperty({ query: request.query, documents: todos, totalDocuments });
 
     return response.status(200).send({ status: true, data: todos, paginate });

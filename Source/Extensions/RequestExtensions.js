@@ -1,5 +1,7 @@
 'use strict';
 
+const _ = require('lodash');
+
 const configurePagination = query => {
   let { page, pageSize } = query;
 
@@ -31,7 +33,7 @@ const configureSort = query => {
 const createObjectQuery = query => {
   if (!query) { return {}; }
 
-  const criteria = { };
+  const criteria = {};
 
   for (let property in query) {
     if (process.env.QUERY_PARAMS.includes(property.toLowerCase())) continue;
@@ -41,7 +43,7 @@ const createObjectQuery = query => {
 
   const sort = configureSort(query);
   const { page, pageSize } = configurePagination(query);
-  const object = { criteria, sort, page, pageSize };
+  const object = { criteria, sort, page, pageSize, relation: JSON.parse(_.get(query, 'relation', '[]')) };
 
   return object;
 }

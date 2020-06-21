@@ -2,9 +2,10 @@
 
 const { User } = require('../Models/User');
 
-const getAllAsync = async ({ criteria, page, pageSize, sort }) => 
+const getAllAsync = async ({ criteria, page, pageSize, sort, relation }) => 
   await User
     .find(criteria ? criteria : {})
+    .populate(relation[0])
     .skip(page)
     .limit(pageSize)
     .sort(sort ? sort : {});
@@ -29,7 +30,7 @@ const deleteTodoAsync = async identifiers => {
   return await updateAsync({ id: user._id, metadata });
 }
 
-const count = async () => await User.countDocuments();
+const count = async ({ criteria }) => await User.countDocuments(criteria ? criteria : {});
 
 const userRepository = () => ({ 
   getAllAsync, 

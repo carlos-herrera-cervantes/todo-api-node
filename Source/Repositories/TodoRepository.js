@@ -2,9 +2,10 @@
 
 const { Todo } = require('../Models/Todo');
 
-const getAllAsync = async ({ criteria, page, pageSize, sort }) =>
+const getAllAsync = async ({ criteria, page, pageSize, sort, relation }) =>
     await Todo
         .find(criteria ? criteria : {})
+        .populate(relation[0])
         .skip(page)
         .limit(pageSize)
         .sort(sort ? sort : {});

@@ -2,12 +2,12 @@
 
 const { subtractAbsolute } = require('./MathExtensions');
 
-const getPaginateProperty = ({ query, documents, totalDocuments }) => {
-  const pageSize = query.pageSize;
+const getPaginateProperty = ({ query, totalDocuments }) => {
+  const { pageSize, page: pageQuery } = query;
 
   if (pageSize <= 0) { return; }
 
-  const page = query.page == 0 ? 1 : query.page + 1;
+  const page = pageQuery == 0 ? 1 : pageQuery;
   const take = page * pageSize;
   const remainingDocuments = subtractAbsolute([ totalDocuments, take ]);
 
