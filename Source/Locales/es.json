@@ -6,5 +6,6 @@
   "InvalidToken": "El token no es válido.",
   "InvalidObjectId": "El ID ingresado no es válido.",
   "InvalidPaginateParams": "Se debe indicar el tamaño de la página y el número de página.",
-  "InvalidPaginateNumbers": "El valor de page debe ser mayor a 0 / El valor de pageSize debe ser mayor a 0 y menor a 100."
+  "InvalidPaginateNumbers": "El valor de page debe ser mayor a 0 / El valor de pageSize debe ser mayor a 0 y menor a 100.",
+  "InvalidPermissions": "No tienes suficientes permisos para realizar esta acción."
 }

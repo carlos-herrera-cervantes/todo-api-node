@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
 const moment = require('moment');
+const { roles } = require('../Constants/Roles');
 
 const UserSchema = new mongoose.Schema({
     email: {
@@ -21,6 +22,10 @@ const UserSchema = new mongoose.Schema({
     age: {
         type: Number,
         default: 18
+    },
+    role: {
+        type: String,
+        default: roles.client
     },
     createdAt: {
         type: Date,

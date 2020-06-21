@@ -1,6 +1,8 @@
 'use strict';
 
+const _ = require('lodash');
 const { ObjectID } = require('mongodb');
+const { accessTokenRepository } = require('../Repositories/AccessTokenRepository');
 
 const validateId = (request, response, next) => {
   try {
@@ -45,4 +47,21 @@ const validatePagination = (request, response, next) => {
   }
 }
 
-module.exports = { validateId, validatePagination };
+const validateRole = (...roles) => async (request, response, next) => {
+  try {
+    const { headers: { authorization } } = request;
+    const extractedToken = authorization.split(' ')[1];
+    const token = await accessTokenRepository().getOneAsync({ criteria: { token: extractedToken } });
+    
+    if (roles.includes(_.get(token, 'role', ''))) {
+      return next();
+    }
+
+    return response.status(401).send({ status: false, message: response.__('InvalidPermissions') });
+  } 
+  catch (error) {
+      return response.status(500).send({ status: false, message: error.message });
+  }
+}
+
+module.exports = { validateId, validatePagination, validateRole };
