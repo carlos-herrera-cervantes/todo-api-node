@@ -19,7 +19,7 @@ const createAsync = async todo => {
 
 const updateAsync = async todo => await Todo.findOneAndUpdate({ _id: todo.id }, { $set: todo.metadata }, { new: true });
 
-const deleteAsync = async id => await Todo.findOneAndDelete({ _id: id });
+const deleteAsync = async id => await Todo.deleteOne({ _id: id });
 
 const deleteManyAsync = async id => await Todo.deleteMany({ _id: id });
 

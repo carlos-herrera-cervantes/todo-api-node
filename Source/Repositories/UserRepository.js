@@ -21,10 +21,13 @@ const createAsync = async user => {
 
 const updateAsync = async user => await User.findOneAndUpdate({ _id: user.id }, { $set: user.metadata }, { new: true });
 
-const deleteAsync = async id => await User.findOneAndRemove({ _id: id });
+const deleteAsync = async id => await User.deleteOne({ _id: id });
 
 const deleteTodoAsync = async identifiers => {
   const user = await User.findById(identifiers.user);
+
+  if (!user) { return; }
+
   const metadata = { todos: user.todos.filter(element => element != identifiers.todo) }
 
   return await updateAsync({ id: user._id, metadata });
