@@ -2,48 +2,32 @@
 
 const { User } = require('../Models/User');
 
-const getAllAsync = async ({ criteria, page, pageSize, sort, relation }) => 
+const getAllAsync = async mongoFilter => 
   await User
-    .find(criteria ? criteria : {})
-    .populate(relation[0])
-    .skip(page)
-    .limit(pageSize)
-    .sort(sort ? sort : {});
+    .find(mongoFilter.criteria)
+    .populate(mongoFilter.relation[0])
+    .skip(mongoFilter.pagination.page)
+    .limit(mongoFilter.pagination.pageSize)
+    .sort(mongoFilter.sort);
 
 const getByIdAsync = async id => await User.findById(id);
 
-const getOneAsync = async ({ criteria }) => await User.findOne(criteria ? criteria : {});
+const getOneAsync = async mongoFilter => await User.findOne(mongoFilter.criteria);
 
-const createAsync = async user => { 
-  const userCreated = await User.create(user); 
-  return userCreated.save(); 
-}
+const createAsync = async user => await User.create(user);
 
 const updateAsync = async user => await User.findOneAndUpdate({ _id: user.id }, { $set: user.metadata }, { new: true });
 
-const deleteAsync = async id => await User.deleteOne({ _id: id });
+const deleteAsync = async id => await User.findOneAndDelete({ _id: id });
 
-const deleteTodoAsync = async identifiers => {
-  const user = await User.findById(identifiers.user);
+const countAsync = async mongoFilter => await User.countDocuments(mongoFilter.criteria);
 
-  if (!user) { return; }
-
-  const metadata = { todos: user.todos.filter(element => element != identifiers.todo) }
-
-  return await updateAsync({ id: user._id, metadata });
-}
-
-const count = async ({ criteria }) => await User.countDocuments(criteria ? criteria : {});
-
-const userRepository = () => ({ 
-  getAllAsync, 
-  getByIdAsync, 
-  getOneAsync, 
-  createAsync, 
-  updateAsync, 
-  deleteAsync, 
-  deleteTodoAsync, 
-  count 
-});
-
-module.exports = { userRepository };
+module.exports = { 
+  getAllAsync,
+  getByIdAsync,
+  getOneAsync,
+  createAsync,
+  updateAsync,
+  deleteAsync,
+  countAsync
+};

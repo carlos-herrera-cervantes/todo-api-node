@@ -1,45 +1,52 @@
 'use strict';
 
 const express = require('express');
-const { todoController } = require('../Controllers/TodoController');
+const { getAllAsync, getByIdAsync, createAsync, updateAsync, deleteAsync } = require('../Controllers/TodoController');
 const { authenticateUser } = require('../Middlewares/Authentication');
 const { validateId, validatePagination, validateRole } = require('../Middlewares/Validator');
-const { todoMiddleware } = require('../Middlewares/Todo');
-const { userMiddleware } = require('../Middlewares/User');
+const { todoExistsById } = require('../Middlewares/Todo');
+const { userExistsById } = require('../Middlewares/User');
 const { updateDateMiddleware } = require('../Middlewares/UpdateDate');
 
 const todoRouter = express.Router();
 
 todoRouter.route('/')
-    .get(authenticateUser, validatePagination, todoController().getAllAsync);
+    .get(
+        authenticateUser, 
+        validateRole('Admin', 'Client'), 
+        validatePagination, 
+        getAllAsync
+    );
 
 todoRouter.route('/:id')
     .get(
         authenticateUser, 
+        validateRole('Admin', 'Client'),
         validateId, 
-        todoMiddleware().todoExistsById, 
-        todoController().getByIdAsync
+        todoExistsById, 
+        getByIdAsync
     )
     .post(
         authenticateUser, 
+        validateRole('Admin', 'Client'),
         validateId, 
-        userMiddleware().userExistsById, 
-        todoController().createAsync
+        userExistsById, 
+        createAsync
     )
     .patch(
         authenticateUser, 
         validateId, 
-        validateRole('Admin'),
-        todoMiddleware().todoExistsById, 
+        validateRole('Admin', 'Client'),
+        todoExistsById, 
         updateDateMiddleware, 
-        todoController().updateAsync
+        updateAsync
     )
     .delete(
         authenticateUser, 
         validateId,
-        validateRole('Admin'),
-        todoMiddleware().todoExistsById, 
-        todoController().deleteAsync
+        validateRole('Admin', 'Client'),
+        todoExistsById, 
+        deleteAsync
     );
 
 module.exports = { todoRouter };

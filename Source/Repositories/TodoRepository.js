@@ -2,37 +2,32 @@
 
 const { Todo } = require('../Models/Todo');
 
-const getAllAsync = async ({ criteria, page, pageSize, sort, relation }) =>
+const getAllAsync = async mongoFilter =>
     await Todo
-        .find(criteria ? criteria : {})
-        .populate(relation[0])
-        .skip(page)
-        .limit(pageSize)
-        .sort(sort ? sort : {});
+        .find(mongoFilter.criteria)
+        .populate(mongoFilter.relation[0])
+        .skip(mongoFilter.pagination.page)
+        .limit(mongoFilter.pagination.pageSize)
+        .sort(mongoFilter.sort);
 
 const getByIdAsync = async id => await Todo.findById(id);
 
-const createAsync = async todo => { 
-    const todoCreated = await Todo.create(todo); 
-    return await todoCreated.save(); 
-}
+const createAsync = async todo => await Todo.create(todo); 
 
 const updateAsync = async todo => await Todo.findOneAndUpdate({ _id: todo.id }, { $set: todo.metadata }, { new: true });
 
-const deleteAsync = async id => await Todo.deleteOne({ _id: id });
+const deleteAsync = async id => await Todo.findOneAndDelete({ _id: id });
 
-const deleteManyAsync = async id => await Todo.deleteMany({ _id: id });
+const deleteManyAsync = async mongoFilter => Todo.deleteMany(mongoFilter.criteria);
 
-const count = async ({ criteria }) => await Todo.countDocuments(criteria ? criteria : {});
+const countAsync = async mongoFilter => await Todo.countDocuments(mongoFilter.criteria);
 
-const todoRepository = () => ({ 
-    getAllAsync, 
-    getByIdAsync, 
-    createAsync, 
-    updateAsync, 
-    deleteAsync, 
-    deleteManyAsync, 
-    count 
-});
-
-module.exports = { todoRepository };
+module.exports = { 
+    getAllAsync,
+    getByIdAsync,
+    createAsync,
+    updateAsync,
+    deleteAsync,
+    countAsync,
+    deleteManyAsync
+};

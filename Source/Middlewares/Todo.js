@@ -1,20 +1,8 @@
 'use strict';
 
-const { todoRepository } = require('../Repositories/TodoRepository');
+const { handleExceptionAsync } = require('../Extensions/Error');
+const { runValidateTodoExistsByIdAsync } = require('../Tasks/TodoTasks');
 
-const todoExistsById = async (request, response, next) => {
-  try {
-    const todo = todoRepository().getByIdAsync(request.params.id);
+const todoExistsById = async (request, response, next) => await handleExceptionAsync(runValidateTodoExistsByIdAsync, request, response, next);
 
-    if (!todo) { return response.status(404).send({ status: false, message: response.__('TodoNotFound') }); }
-
-    return next();
-  }
-  catch (error) {
-    return response.status(500).send({ status: false, message: error.message });
-  }
-}
-
-const todoMiddleware = () => ({ todoExistsById });
-
-module.exports = { todoMiddleware };
+module.exports = { todoExistsById };

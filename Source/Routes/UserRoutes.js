@@ -1,12 +1,12 @@
 'use strict';
 
 const express = require('express');
-const { userController } = require('../Controllers/UserController');
-const { todoController } = require('../Controllers/TodoController');
-const { loginController } = require('../Controllers/LoginController');
+const { getAllAsync, createAsync, getByIdAsync, updateAsync, deleteAsync } = require('../Controllers/UserController');
+const { getByUserIdAsync } = require('../Controllers/TodoController');
+const { login } = require('../Controllers/LoginController');
 const { authenticateUser } = require('../Middlewares/Authentication');
 const { validateId, validatePagination, validateRole } = require('../Middlewares/Validator');
-const { userMiddleware } = require('../Middlewares/User');
+const { userExistsById, userExistsByEmail } = require('../Middlewares/User');
 const { updateDateMiddleware } = require('../Middlewares/UpdateDate');
 
 const userRouter = express.Router();
@@ -14,44 +14,53 @@ const userRouter = express.Router();
 userRouter.route('/')
     .get(
         authenticateUser,
-        validatePagination, 
-        userController().getAllAsync
+        validateRole('Admin', 'Client'),
+        validatePagination,
+        getAllAsync
     )
-    .post(authenticateUser, userController().createAsync);
+    .post(
+        authenticateUser,
+        createAsync
+    );
 
 userRouter.route('/:id')
     .get(
-        authenticateUser, 
+        authenticateUser,
+        validateRole('Admin', 'Client'),
         validateId,
-        userMiddleware().userExistsById, 
-        userController().getByIdAsync
+        userExistsById, 
+        getByIdAsync
     )
     .patch(
         authenticateUser, 
         validateId,
-        validateRole('Admin'),
-        userMiddleware().userExistsById, 
+        validateRole('Admin', 'Client'),
+        userExistsById, 
         updateDateMiddleware, 
-        userController().updateAsync
+        updateAsync
     )
     .delete(
         authenticateUser, 
         validateId,
-        validateRole('Admin'),
-        userMiddleware().userExistsById, 
-        userController().deleteAsync
+        validateRole('Admin', 'Client'),
+        userExistsById, 
+        deleteAsync
     );
 
 userRouter.route('/:id/todos')
     .get(
         authenticateUser, 
+        validateRole('Admin', 'Client'),
         validateId, 
         validatePagination, 
-        userMiddleware().userExistsById, 
-        todoController().getByUserIdAsync
+        userExistsById, 
+        getByUserIdAsync
     );
 
 userRouter.route('/login')
-    .post(userMiddleware().userExistsByEmail, loginController().login);
+    .post(
+        userExistsByEmail,
+        login
+    );
 
 module.exports = { userRouter };

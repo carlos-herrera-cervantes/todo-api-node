@@ -1,7 +1,6 @@
 const mongoose = require('mongoose');
 const moment = require('moment');
 const { roles } = require('../Constants/Roles');
-const { Todo } = require('../Models/Todo');
 
 const UserSchema = new mongoose.Schema({
     email: {
@@ -44,11 +43,6 @@ const UserSchema = new mongoose.Schema({
     ]
 });
 
-UserSchema.pre('deleteOne', async function(next) {
-    await Todo.deleteMany({ user: this._conditions._id });
-    next();
-});
-
 const User = mongoose.model('User', UserSchema);
 
-module.exports = { User }
+module.exports = { User };

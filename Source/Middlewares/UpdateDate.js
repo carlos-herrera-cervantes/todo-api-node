@@ -1,16 +1,8 @@
 'use strict';
 
-const moment = require('moment');
+const { handleException } = require('../Extensions/Error');
+const { runUpdateDate } = require('../Tasks/GenericTasks');
 
-const updateDateMiddleware = (request, response, next) => {
-  try {
-    request.body.updatedAt = moment().utc().format('YYYY-MM-DDTHH:mm:ss');
-
-    return next();
-  }
-  catch (error) {
-    return response.status(500).send({ status: false, message: error.message });
-  }
-}
+const updateDateMiddleware = (request, response, next) => handleException(runUpdateDate, request, response, next);
 
 module.exports = { updateDateMiddleware };
